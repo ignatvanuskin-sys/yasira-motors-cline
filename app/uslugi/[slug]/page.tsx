@@ -10,8 +10,15 @@ import { toOtherServices, toServiceView } from '@/lib/serviceView';
 import { BreadcrumbJsonLd, JsonLd } from '@/components/seo/JsonLd';
 import { getServiceBySlug, services } from '@/content/services';
 import { servicePages } from '@/content/servicePages';
+import { getSiteUrl } from '@/lib/siteUrl';
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://yasira-motors.vercel.app';
+/**
+ * Базовый адрес для BreadcrumbList берём из единственного источника —
+ * `getSiteUrl()`. Раньше здесь был свой `process.env.NEXT_PUBLIC_SITE_URL ?? …`:
+ * на пустой строке `??` не срабатывает, и в микроразметку уезжал адрес вида
+ * `/uslugi/…` без домена. Разбор переменной живёт только в `lib/siteUrl.ts`.
+ */
+const SITE_URL = getSiteUrl();
 
 /** Статическая генерация всех страниц услуг (раздел 19). */
 export function generateStaticParams() {
