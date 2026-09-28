@@ -1,6 +1,8 @@
 # YASIRA MOTORS — сайт автосервиса
 
-Сайт автосервиса в Актау: запись на сервис онлайн, прайс, контакты и отзывы.
+Сайт автосервиса в Актау: услуги, прайс, контакты и отзывы.
+Заявка уходит администратору звонком или в WhatsApp — формы сбора данных
+на сайте нет.
 Собран по мастер-промпту `YASIRA_MOTORS_MASTER_PROMPT.md`.
 
 **Главное правило проекта: не выдумывать.** Все цифры, график, телефоны и адрес
@@ -14,7 +16,7 @@
 
 ```bash
 npm install
-cp .env.example .env.local   # заполнить TELEGRAM_* — иначе заявки не доходят
+cp .env.example .env.local   # при необходимости указать NEXT_PUBLIC_SITE_URL
 npm run dev                  # http://localhost:3000
 ```
 
@@ -54,8 +56,8 @@ npm start
 | `npm start` | Запуск собранного сайта |
 | `npm run typecheck` | `tsc --noEmit` |
 | `npm run lint` | ESLint (flat-конфиг, без `next lint`) |
-| `npm test` | Юнит-тесты (56 шт.) |
-| `npm run test:e2e` | Playwright: адаптив, axe, запись, SEO, снимки (25 тестов) |
+| `npm test` | Юнит-тесты (33 шт.) |
+| `npm run test:e2e` | Playwright: адаптив, axe, тап-цели, связь, SEO, снимки (23 теста) |
 | `node scripts/repair-empty-dirs.mjs` | Заполнить пустые каталоги пакетов (см. ниже) |
 | `node scripts/generate-icons.mjs` | Перегенерация PNG-иконок из SVG |
 | `node scripts/audit-axe.mjs` | Быстрый прогон axe-core по страницам |
@@ -85,7 +87,6 @@ app/                      маршруты App Router
   page.tsx                главная
   uslugi/[slug]/page.tsx  страницы услуг (SSG)
   privacy/page.tsx        политика конфиденциальности
-  api/lead/route.ts       приём заявок → Telegram
   sitemap.ts robots.ts manifest.ts opengraph-image.tsx icon.svg
   layout.tsx globals.css  шрифты, метаданные, дизайн-токены
 content/                  ВСЕ ДАННЫЕ И ТЕКСТЫ ЗДЕСЬ
@@ -104,8 +105,8 @@ lib/                      логика без React
   analytics.ts i18n.ts serviceView.ts
 components/
   ui/                     Button, Accordion, Section, Reveal, Badge, Container…
-  layout/                 Header, MobileMenu, MobileCallBar, Footer, ContactLinks
-  sections/               секции главной и ContactCard (карточка связи в hero)
+  layout/                 Header, MobileMenu, Footer, ContactLinks, SiteShell, Wordmark
+  sections/               секции главной и тела страниц услуг
   seo/                    JSON-LD (AutoRepair, BreadcrumbList)
 messages/ru.json kk.json  тексты интерфейса
 tests/                    юнит-тесты
@@ -118,16 +119,15 @@ scripts/                  служебные скрипты (сборка ико
 
 Отчёт по разделу 23 мастер-промпта — [`qa/AUDIT.md`](./qa/AUDIT.md):
 что проверялось, какие проблемы найдены, что исправлено и что осталось
-за флагом. Снимки — в `qa/screens/` (68 файлов: страницы на 7 ширинах,
-меню, лист записи на трёх шагах + ошибка + успех).
+за флагом. Снимки — в `qa/screens/` (28 файлов: главная, страница услуги,
+`/privacy` и 404 на 7 ширинах — от 320 до 1440 px).
 
 ```bash
-npx playwright test                      # весь набор (26 тестов)
-npx playwright test qa/audit.spec.ts     # адаптив, axe, a11y
-npx playwright test qa/screens.spec.ts    # только скриншоты
+npx playwright test                       # весь набор (23 теста)
+npx playwright test qa/audit.spec.ts      # адаптив, тап-цели, axe, снимки
+npx playwright test qa/nav.spec.ts        # меню, FAQ, 404, SEO
+npx playwright test qa/screens.spec.ts    # связь: tel:, wa.me, клавиатура
 ```
 
 > Перед прогоном убедитесь, что на порту 3111 не висит старый `next start`:
 > `reuseExistingServer` переиспользует его, и тесты пойдут по старому бандлу.
-
-```

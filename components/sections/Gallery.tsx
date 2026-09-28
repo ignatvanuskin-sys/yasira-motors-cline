@@ -52,7 +52,7 @@ export function Gallery({ dict }: { dict: Dictionary }) {
 
       {/* Десктопная мозаика 3+2. */}
       <div className="mt-8 hidden gap-3 md:grid md:grid-cols-3 md:grid-rows-2">
-        {featured && (
+        {featured ? (
           <button
             type="button"
             onClick={() => setOpenIndex(gallery.indexOf(featured))}
@@ -60,7 +60,7 @@ export function Gallery({ dict }: { dict: Dictionary }) {
           >
             <Photo photo={featured} sizes="(max-width: 1024px) 0px, 60vw" />
           </button>
-        )}
+        ) : null}
         {rest.slice(0, 4).map((photo) => (
           <button
             key={photo.id}
@@ -77,9 +77,22 @@ export function Gallery({ dict }: { dict: Dictionary }) {
       <Dialog.Root open={active !== null} onOpenChange={(o) => !o && setOpenIndex(null)}>
         <Dialog.Portal>
           <Dialog.Overlay className="fixed inset-0 z-50 bg-black/90" />
-          <Dialog.Content className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          {/* Стрелки ←/→ — клавиатурная альтернатива свайпу и стрелкам на
+              экране (раздел 20). Esc и захват фокуса даёт Radix Dialog. */}
+          <Dialog.Content
+            className="fixed inset-0 z-50 flex items-center justify-center overscroll-contain p-4"
+            onKeyDown={(event) => {
+              if (event.key === 'ArrowLeft') {
+                event.preventDefault();
+                move(-1);
+              } else if (event.key === 'ArrowRight') {
+                event.preventDefault();
+                move(1);
+              }
+            }}
+          >
             <Dialog.Title className="sr-only">{dict.gallery.title}</Dialog.Title>
-            {active && (
+            {active ? (
               <figure className="flex max-h-full max-w-[92vw] flex-col">
                 <Image
                   src={active.src}
@@ -92,7 +105,7 @@ export function Gallery({ dict }: { dict: Dictionary }) {
                   {active.caption}
                 </figcaption>
               </figure>
-            )}
+            ) : null}
 
             <div className="flex items-center gap-2">
               <button

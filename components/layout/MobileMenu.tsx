@@ -48,7 +48,10 @@ export function MobileMenu({
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-50 bg-black/60 lg:hidden" />
         <Dialog.Content
-          className="fixed inset-0 z-50 flex flex-col bg-bg-dark text-text-on-dark outline-none lg:hidden"
+          // outline-none убран: вместо него работает глобальное правило
+          // :focus-visible (кольцо 2px янтарное), а сам лист получает
+          // overscroll-contain, чтобы прокрутка не «протекала» на страницу.
+          className="fixed inset-0 z-50 flex flex-col overscroll-contain bg-bg-dark text-text-on-dark lg:hidden"
           style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
         >
           <Dialog.Title className="sr-only">{dict.nav.menu}</Dialog.Title>
@@ -64,7 +67,7 @@ export function MobileMenu({
             </Dialog.Close>
           </div>
 
-          <div className="flex flex-1 flex-col gap-3 overflow-y-auto px-4 py-4">
+          <div className="flex flex-1 flex-col gap-3 overflow-y-auto overscroll-contain px-4 py-4">
             {/* Два главных действия сразу наверху — это вся конверсия сайта. */}
             <CallLink
               source="menu"

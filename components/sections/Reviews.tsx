@@ -58,7 +58,7 @@ export function Reviews({ dict }: { dict: Dictionary }) {
       </ul>
 
       {/* Дословные отзывы появятся здесь только после отбора владельцем. */}
-      {verbatimReviews.length > 0 && (
+      {verbatimReviews.length > 0 ? (
         <ul className="mt-4 grid gap-3 md:grid-cols-2">
           {verbatimReviews.map((review) => (
             <li key={review.id} className="rounded-card border border-line-light bg-surface p-5">
@@ -70,7 +70,7 @@ export function Reviews({ dict }: { dict: Dictionary }) {
             </li>
           ))}
         </ul>
-      )}
+      ) : null}
 
       <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2">
         <span className="tnum inline-flex items-center gap-1.5 text-sm font-semibold text-text">

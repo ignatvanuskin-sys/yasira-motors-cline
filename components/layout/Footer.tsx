@@ -119,7 +119,7 @@ export function Footer({ dict, locale }: { dict: Dictionary; locale: 'ru' | 'kk'
 
           <div className="flex items-center gap-4">
             {/* Переключатель языка — только при включённой казахской версии. */}
-            {flags.showLangSwitcher && (
+            {flags.showLangSwitcher ? (
               <nav aria-label="Язык сайта" className="flex items-center gap-1">
                 <Link
                   href="/"
@@ -138,10 +138,10 @@ export function Footer({ dict, locale }: { dict: Dictionary; locale: 'ru' | 'kk'
                   KK
                 </Link>
               </nav>
-            )}
+            ) : null}
 
             {/* ⚑ Ссылка на группу — только после подтверждения владельца. */}
-            {site.group.show && (
+            {site.group.show ? (
               <a
                 href={site.group.url}
                 target="_blank"
@@ -150,7 +150,7 @@ export function Footer({ dict, locale }: { dict: Dictionary; locale: 'ru' | 'kk'
               >
                 Часть группы {site.group.name}
               </a>
-            )}
+            ) : null}
           </div>
         </div>
       </div>

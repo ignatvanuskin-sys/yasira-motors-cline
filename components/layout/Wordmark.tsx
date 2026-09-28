@@ -2,6 +2,9 @@
 export function Wordmark({ className = '' }: { className?: string }) {
   return (
     <span
+      // translate="no" — название бренда не должно попадать в авто-перевод
+      // браузера (раздел 18: бренд пишется всегда одинаково).
+      translate="no"
       className={`inline-flex flex-col leading-none font-extrabold tracking-[-0.02em] ${className}`}
     >
       <span className="text-text-on-dark">YASIRA</span>
