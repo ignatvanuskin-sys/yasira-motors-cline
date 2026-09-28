@@ -4,7 +4,6 @@ import { SiteShell } from '@/components/layout/SiteShell';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { Hero } from '@/components/sections/Hero';
-import { ContactCard } from '@/components/sections/ContactCard';
 import { ServicesGrid } from '@/components/sections/ServicesGrid';
 import { WhyUs } from '@/components/sections/WhyUs';
 import { Prices } from '@/components/sections/Prices';
@@ -50,7 +49,7 @@ export default function HomePage() {
       <Header dict={dict} locale="ru" />
 
       <main id="main">
-        <Hero dict={dict} sideCard={<ContactCard dict={dict} />} />
+        <Hero dict={dict} />
         <ServicesGrid dict={dict} locale="ru" />
         <WhyUs dict={dict} />
         <Prices dict={dict} />

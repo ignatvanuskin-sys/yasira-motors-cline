@@ -73,44 +73,38 @@ test.describe('Связь с администратором', () => {
     await page.goto('/', { waitUntil: 'networkidle' });
 
     const bar = page.locator('.mobile-call-bar');
-    // На первом экране панели нет — призыв есть в hero.
-    await expect(bar).toHaveAttribute('aria-hidden', 'true');
+    // Панели связи внизу больше нет: шапка всегда на виду и несёт звонок.
+    await expect(bar).toHaveCount(0);
 
-    await page.evaluate(() => window.scrollTo(0, 1200));
-    await expect(bar).toHaveAttribute('aria-hidden', 'false');
-    // Кнопки панели — рабочие ссылки связи.
-    await expect(bar.locator('a[href^="tel:"]')).toHaveCount(1);
-    await expect(bar.locator('a[href*="wa.me"]')).toHaveCount(1);
+    // Кнопка звонка в шапке остаётся доступной на всей странице.
+    // :visible — в шапке есть и скрытый на мобильных текстовый телефон,
+    // поэтому берём именно тот элемент, который показан пользователю.
+    const headerCall = page.locator('header a[href^="tel:"]:visible').first();
+    await expect(headerCall).toBeVisible();
+    await page.evaluate(() => window.scrollTo(0, 3000));
+    await page.waitForTimeout(300);
+    await expect(headerCall).toBeInViewport();
+  });
 
-    // В самом низу страницы панель не должна закрывать содержимое футера.
-    // scroll-behavior: smooth, поэтому ждём фактической остановки прокрутки.
-    await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
-    await page.waitForFunction(() => {
-      const doc = document.documentElement;
-      return Math.abs(doc.scrollHeight - doc.scrollTop - doc.clientHeight) < 2;
-    });
-    await page.waitForTimeout(400);
+  test('шапка остаётся на месте при прокрутке вниз', async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 667 });
+    await page.goto('/', { waitUntil: 'networkidle' });
 
-    const overlap = await page.evaluate(() => {
-      const bar = document.querySelector('.mobile-call-bar');
-      const footer = document.querySelector('footer');
-      if (!bar || !footer) return { error: 'нет панели или футера' };
-      const barTop = bar.getBoundingClientRect().top;
-      // Последний видимый элемент футера — самый нижний, что клиент видит.
-      const items = Array.from(footer.querySelectorAll('p, a, h2'));
-      const last = items[items.length - 1];
-      if (!last) return { error: 'футер пуст' };
-      const lastRect = last.getBoundingClientRect();
-      return {
-        barTop: Math.round(barTop),
-        lastText: (last.textContent ?? '').trim().slice(0, 30),
-        lastBottom: Math.round(lastRect.bottom),
-        covered: lastRect.bottom > barTop + 1,
-      };
-    });
+    const header = page.locator('header');
+    const topBefore = (await header.boundingBox())!.y;
 
-    expect(overlap.error ?? null).toBeNull();
-    expect(overlap.covered, `Панель закрывает «${overlap.lastText}»`).toBe(false);
+    await page.evaluate(() => window.scrollTo(0, 1500));
+    await page.waitForTimeout(300);
+
+    // Регрессия: раньше шапка уезжала вверх при прокрутке вниз.
+    const boxAfter = (await header.boundingBox())!;
+    expect(Math.abs(boxAfter.y - topBefore), 'шапка сдвинулась при прокрутке').toBeLessThan(2);
+    expect(await header.isVisible(), 'шапка скрылась при прокрутке вниз').toBe(true);
+
+    // И обратно вверх.
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.waitForTimeout(300);
+    expect(Math.abs((await header.boundingBox())!.y - topBefore)).toBeLessThan(2);
   });
 
   test('кнопки связи доступны с клавиатуры на 320px', async ({ page }) => {

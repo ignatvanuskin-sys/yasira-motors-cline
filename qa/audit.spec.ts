@@ -142,35 +142,42 @@ test('состояние prefers-reduced-motion отключает анимац�
   await context.close();
 });
 
-test('панель связи не перекрывает содержимое футера', async ({ page }) => {
+test('шапка закреплена и не перекрывает контент', async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 667 });
   await page.goto('/', { waitUntil: 'networkidle' });
 
-  // scroll-behavior: smooth — дожидаемся реальной остановки внизу страницы.
-  await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
-  await page.waitForFunction(() => {
-    const doc = document.documentElement;
-    return Math.abs(doc.scrollHeight - doc.scrollTop - doc.clientHeight) < 2;
-  });
-  await page.waitForTimeout(400);
+  const header = page.locator('header');
+  await expect(header).toHaveCSS('position', 'sticky');
+  await expect(header).toBeVisible();
 
-  const problem = await page.evaluate(() => {
-    const bar = document.querySelector('.mobile-call-bar');
-    const footer = document.querySelector('footer');
-    if (!bar || !footer) return 'нет панели или футера';
-    if (window.getComputedStyle(bar).display === 'none') {
-      return 'панель связи скрыта на мобильной ширине';
-    }
-    const barTop = bar.getBoundingClientRect().top;
-    const items = Array.from(footer.querySelectorAll('p, a, h2'));
-    const last = items.at(-1);
-    if (!last) return 'футер пуст';
-    // Нижний элемент футера должен помещаться над панелью.
-    return last.getBoundingClientRect().bottom > barTop + 1
-      ? `панель закрывает «${(last.textContent ?? '').trim().slice(0, 30)}»`
-      : null;
+  // Регрессия: шапка уезжала вверх при прокрутке вниз — на узких экранах
+  // это убирало единственную кнопку звонка из поля зрения.
+  const topBefore = (await header.boundingBox())!.y;
+  await page.evaluate(() => window.scrollTo(0, 2500));
+  await page.waitForTimeout(300);
+  expect(
+    Math.abs((await header.boundingBox())!.y - topBefore),
+    'шапка сдвинулась при прокрутке вниз',
+  ).toBeLessThan(2);
+
+  // Переход по якорю не должен прятать заголовок секции под шапку.
+  // Первый экран (hero) под шапкой — так и задумано, обе поверхности
+  // тёмные, поэтому проверяем только переход по ссылке из меню.
+  await page.goto('/#ceny', { waitUntil: 'networkidle' });
+  await page.waitForTimeout(600);
+  const underHeader = await page.evaluate(() => {
+    const headerHeight = document.querySelector('header')?.getBoundingClientRect().height ?? 0;
+    const section = document.getElementById('ceny');
+    if (!section) return { error: 'нет секции #ceny' };
+    // Заголовок секции должен быть ниже шапки.
+    const heading = section.querySelector('h2');
+    return { top: Math.round((heading ?? section).getBoundingClientRect().top), headerHeight: Math.round(headerHeight) };
   });
-  expect(problem).toBeNull();
+  expect(underHeader.error ?? null).toBeNull();
+  expect(
+    underHeader.top,
+    'Заголовок секции уехал под закреплённую шапку',
+  ).toBeGreaterThanOrEqual(underHeader.headerHeight);
 });
 
 test('казахские буквы отрисовываются гарнитурой без «квадратов»', async ({ page }) => {

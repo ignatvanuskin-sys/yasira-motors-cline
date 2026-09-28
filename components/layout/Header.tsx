@@ -10,15 +10,19 @@ import type { Dictionary } from '@/lib/i18n';
 
 /**
  * Шапка — раздел 10.1.
- * Sticky, при прокрутке вниз скрывается (200 мс), при прокрутке вверх появляется.
- * Мобильный: 56px, wordmark ≤112px, кнопка звонка ≤108px, кнопка меню 44×44.
- * Расчёт на 320px: 16+112+8+108+8+44+16 = 312 ≤ 320.
- * Десктоп: навигация, телефон текстом, кнопка «Позвонить» и WhatsApp.
+ *
+ * Sticky и ВСЕГДА на виду: шапка прячет телефон и кнопку связи, а на сайте
+ * их больше нигде не продублировано на узких экранах, поэтому прятать шапку
+ * при прокрутке вниз нельзя. Вместо этого при прокрутке она получает
+ * нижнюю границу и тень — визуально отделяется от светлых блоков.
+ *
+ * Мобильный: 56px, wordmark ≤112px, кнопка звонка ≤112px, кнопка меню 44×44.
+ * Расчёт на 320px: 16+112+8+112+8+44+16 = 316 ≤ 320.
+ * Десктоп: навигация, телефон текстом, кнопки «Позвонить» и WhatsApp.
  */
 export function Header({ dict, locale }: { dict: Dictionary; locale: 'ru' | 'kk' }) {
-  const [hidden, setHidden] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [lastY, setLastY] = useState(0);
 
   useEffect(() => {
     let ticking = false;
@@ -26,25 +30,25 @@ export function Header({ dict, locale }: { dict: Dictionary; locale: 'ru' | 'kk'
       if (ticking) return;
       ticking = true;
       requestAnimationFrame(() => {
-        const y = window.scrollY;
-        // Скрываем только при явной прокрутке вниз и за пределами первых 100px.
-        setHidden(y > lastY && y > 100);
-        setLastY(y);
+        setScrolled(window.scrollY > 8);
         ticking = false;
       });
     };
+    onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
-  }, [lastY]);
+  }, []);
 
   const prefix = locale === 'kk' ? '/kk' : '';
 
   return (
     <header
-      className={
-        'sticky top-0 z-40 bg-bg-dark text-text-on-dark transition-transform duration-200 ease-[cubic-bezier(.2,.7,.2,1)] ' +
-        (hidden ? '-translate-y-full' : 'translate-y-0')
-      }
+      className={[
+        'sticky top-0 z-40 bg-bg-dark text-text-on-dark transition-[box-shadow,border-color] duration-200 ease-[cubic-bezier(.2,.7,.2,1)]',
+        // После первых пикселей прокрутки — граница и мягкая тень, чтобы шапка
+        // не сливалась со светлыми секциями под ней.
+        scrolled ? 'border-b border-line-dark shadow-[0_8px_24px_-12px_rgba(0,0,0,0.55)]' : 'border-b border-transparent',
+      ].join(' ')}
     >
       <div className="container-site flex h-14 items-center gap-2 lg:h-16">
         <a
@@ -82,9 +86,7 @@ export function Header({ dict, locale }: { dict: Dictionary; locale: 'ru' | 'kk'
         </nav>
 
         <div className="ml-auto flex items-center gap-2 lg:ml-4">
-          {/* Телефон и WhatsApp — только на десктопе.
-              Контейнер скрыт на мобильном, чтобы не конфликтовать
-              с базовым display у ссылок ниже. */}
+          {/* Телефон текстом и WhatsApp — только на десктопе. */}
           <div className="hidden items-center gap-3 lg:flex">
             <a
               href={`tel:${site.phones.primary}`}

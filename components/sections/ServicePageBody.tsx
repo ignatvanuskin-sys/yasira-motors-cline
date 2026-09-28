@@ -109,7 +109,7 @@ export function ServicePageBody({
 
         <aside className="lg:col-span-4">
           <div className="rounded-card border border-line-light bg-surface p-5 lg:sticky lg:top-20">
-            <p className="spec-label text-muted">{dict.contactCard.eyebrow}</p>
+            <p className="spec-label text-muted">{dict.contacts.phones}</p>
             <p className="mt-2 text-base font-semibold text-text">{service.title}</p>
             <p className="mt-1 text-sm text-muted">{service.short}</p>
             <div className="mt-4 flex flex-col gap-2.5">
