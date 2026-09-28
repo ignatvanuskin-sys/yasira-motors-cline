@@ -1,0 +1,8 @@
+node_modules
+.next
+qa/screens
+test-results
+playwright-report
+install.log
+package-lock.json
+*.tsbuildinfo
