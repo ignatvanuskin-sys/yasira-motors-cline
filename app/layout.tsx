@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Inter, Inter_Tight } from 'next/font/google';
 import './globals.css';
 import { site } from '@/content/site';
+import { getSiteUrl } from '@/lib/siteUrl';
 
 /**
  * Шрифты из раздела 8: Inter Tight (заголовки) и Inter (текст).
@@ -36,7 +37,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'https://yasira-motors.vercel.app'),
+  metadataBase: new URL(getSiteUrl()),
   title: `${site.name} — автосервис в Актау | Диагностика и ремонт`,
   description:
     'Автосервис в 25 мкр. Актау: диагностика, ходовая, электрика, АКПП, замена масла, развал-схождение. Рейтинг 4.9 в 2ГИС. Запись онлайн и в WhatsApp.',

@@ -4,10 +4,10 @@
  * Этот файл — тонкая прослойка: тесты пишутся на API vitest
  * (describe/it/expect), а выполняются встроенным раннером node:test.
  */
-import { describe, it } from 'node:test';
+import { describe, it, beforeEach, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 
-export { describe, it };
+export { describe, it, beforeEach, afterEach };
 
 /** Минимальная реализация expect, покрывающая используемые в тестах проверки. */
 export function expect(actual: unknown) {

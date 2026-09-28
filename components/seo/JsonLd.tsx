@@ -1,7 +1,8 @@
 import { site } from '@/content/site';
 import { schedule } from '@/lib/hours';
+import { getSiteUrl } from '@/lib/siteUrl';
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://yasira-motors.vercel.app';
+const SITE_URL = getSiteUrl();
 
 /**
  * Микроразметка AutoRepair — раздел 18.

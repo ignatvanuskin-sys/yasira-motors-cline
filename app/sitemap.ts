@@ -1,8 +1,9 @@
 import type { MetadataRoute } from 'next';
 import { serviceSlugs } from '@/content/services';
 import { flags } from '@/content/flags';
+import { getSiteUrl } from '@/lib/siteUrl';
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://yasira-motors.vercel.app';
+const SITE_URL = getSiteUrl();
 
 /** sitemap.xml — все страницы с lastmod (раздел 18). */
 export default function sitemap(): MetadataRoute.Sitemap {
