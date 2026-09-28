@@ -45,34 +45,31 @@ export function Hero({ dict }: { dict: Dictionary }) {
             <WhatsAppLink label={dict.cta.whatsapp} source="hero" tone="dark" size="lg" />
           </div>
 
-          <p className="mt-4 text-sm text-muted-on-dark">
-            {dict.meta.callOr}{' '}
-            <a
-              href={`tel:${site.phones.primary}`}
-              className="tnum inline-flex min-h-11 items-center font-semibold text-text-on-dark underline decoration-accent decoration-2 underline-offset-4 hover:decoration-accent-hover"
-            >
-              {site.phones.primaryDisplay}
-            </a>
-          </p>
-
           {/* Полоса доверия: три пункта в одинаковых карточках. */}
-          <ul className="mt-6 grid gap-2.5 sm:grid-cols-3">
-            <li className="flex items-center gap-2.5 rounded-btn border border-line-dark bg-white/4 px-3.5 py-3 text-sm">
-              <Star
-                className="size-4 shrink-0 fill-accent text-accent"
-                strokeWidth={1.75}
-                aria-hidden
-              />
-              <span className="tnum font-semibold">
-                {site.rating.value} · {site.rating.reviewsCount}{' '}
-                <span className="font-normal text-muted-on-dark">{site.rating.source}</span>
-              </span>
+          <ul className="mt-7 grid gap-2.5 sm:grid-cols-3">
+            <li className="rounded-btn border border-line-dark bg-white/4 p-0 text-sm transition-colors duration-160 hover:border-accent">
+              <a
+                href={site.links.gisCard}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-11 w-full items-center gap-2.5 px-3.5 py-3 text-text-on-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+              >
+                <Star
+                  className="size-4 shrink-0 fill-accent text-accent"
+                  strokeWidth={1.75}
+                  aria-hidden
+                />
+                <span className="tnum font-semibold underline decoration-accent decoration-2 underline-offset-4 hover:decoration-accent-hover">
+                  {site.rating.value} · {site.rating.reviewsCount}{' '}
+                  <span className="font-normal text-muted-on-dark">{site.rating.source}</span>
+                </span>
+              </a>
             </li>
-            <li className="flex items-center gap-2.5 rounded-btn border border-line-dark bg-white/4 px-3.5 py-3 text-sm">
+            <li className="flex min-h-11 items-center gap-2.5 rounded-btn border border-line-dark bg-white/4 px-3.5 py-3 text-sm">
               <ShieldCheck className="size-4 shrink-0 text-accent" strokeWidth={1.75} aria-hidden />
               <LiveStatus />
             </li>
-            <li className="flex items-center gap-2.5 rounded-btn border border-line-dark bg-white/4 px-3.5 py-3 text-sm text-muted-on-dark">
+            <li className="flex min-h-11 items-center gap-2.5 rounded-btn border border-line-dark bg-white/4 px-3.5 py-3 text-sm text-muted-on-dark">
               <Wrench className="size-4 shrink-0 text-accent" strokeWidth={1.75} aria-hidden />
               {dict.trust.payment}
             </li>
