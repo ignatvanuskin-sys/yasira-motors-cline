@@ -35,17 +35,13 @@ npm start
 | Переменная | Назначение | Обязательна |
 |---|---|---|
 | `NEXT_PUBLIC_SITE_URL` | Адрес сайта для canonical, sitemap, OG | да |
-| `TELEGRAM_BOT_TOKEN` | Токен бота Telegram (только сервер!) | для заявок |
-| `TELEGRAM_CHAT_ID` | Чат владельца для заявок (только сервер!) | для заявок |
 | `NEXT_PUBLIC_GA_ID` | Google Analytics. Пусто — аналитика выключена | нет |
 | `ENABLE_KK` | Казахская версия. **Маршруты `/kk` не реализованы — не включайте** | нет |
 | `SHOW_SHOP` | Включить блок «Масла и магазин» | нет |
 
-⚠️ `TELEGRAM_*` не должны иметь префикс `NEXT_PUBLIC_`, иначе токен попадёт
-в клиентский JavaScript и станет доступен любому посетителю.
-
-Как получить `TELEGRAM_CHAT_ID`: написать боту от @BotFather → открыть
-`https://api.telegram.org/bot<ТОКЕН>/getUpdates` и найти `chat.id`.
+> **Формы записи на сайте нет.** Заявка уходит напрямую администратору через
+> звонок или WhatsApp, поэтому `TELEGRAM_BOT_TOKEN` и `TELEGRAM_CHAT_ID`
+> больше не нужны, а серверных обработчиков персональных данных на сайте нет.
 
 ---
 
@@ -100,18 +96,16 @@ content/                  ВСЕ ДАННЫЕ И ТЕКСТЫ ЗДЕСЬ
   reviews.ts team.ts gallery.ts flags.ts
   servicePages.ts         тексты страниц услуг
 lib/                      логика без React
-  phone.ts                нормализация и маска телефона
+  phone.ts                нормализация номера и цифры для wa.me
   hours.ts                график и статус «Открыто/Закрыто» (Asia/Aqtau)
-  validation.ts           схема заявки (zod)
-  bookingView.ts          «сегодня / 12 октября» для сводки и экрана успеха
+  siteUrl.ts              адрес сайта с безопасным запасным значением
   usePrefersReducedMotion.ts  подписка на системную настройку движения
-  telegram.ts             доставка заявки
-  whatsapp.ts rateLimit.ts analytics.ts i18n.ts serviceView.ts
+  whatsapp.ts             ссылки и тексты обращений в WhatsApp
+  analytics.ts i18n.ts serviceView.ts
 components/
-  ui/                     Button, Chip, Field, Accordion, Section, Reveal…
-  layout/                 Header, MobileMenu, Footer, Wordmark, SiteShell
-  sections/               12 секций главной страницы
-  booking/                BookingProvider, BookingFlow, Step1/2/3, Success
+  ui/                     Button, Accordion, Section, Reveal, Badge, Container…
+  layout/                 Header, MobileMenu, MobileCallBar, Footer, ContactLinks
+  sections/               секции главной и ContactCard (карточка связи в hero)
   seo/                    JSON-LD (AutoRepair, BreadcrumbList)
 messages/ru.json kk.json  тексты интерфейса
 tests/                    юнит-тесты

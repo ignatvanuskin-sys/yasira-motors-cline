@@ -1,22 +1,8 @@
 /**
- * Аналитика — раздел 3 мастер-промпта.
- *
- * ⚡ ПЕРСОНАЛЬНЫЕ ДАННЫЕ (имя, телефон, марка авто, симптомы) НИКОГДА
- * не отправляются в аналитику. Разрешён только закрытый список событий
- * без параметров и только заданный набор параметров.
- *
- * События из раздела 3:
- * booking_open, booking_step_2, booking_step_3, booking_submit_success,
- * booking_submit_error, whatsapp_click, call_click, route_click,
- * service_card_click, price_cta_click.
+ * Список событий. Формы записи на сайте нет, поэтому событий записи не осталось:
+ * отслеживаются только реальные действия клиента.
  */
-
 export const ANALYTICS_EVENTS = [
-  'booking_open',
-  'booking_step_2',
-  'booking_step_3',
-  'booking_submit_success',
-  'booking_submit_error',
   'whatsapp_click',
   'call_click',
   'route_click',

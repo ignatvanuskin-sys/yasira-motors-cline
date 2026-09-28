@@ -1,51 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { formatBookingDay, formatBookingWhen } from '@/lib/bookingView';
-import type { Dictionary } from '@/lib/i18n';
-
-// Словарь не импортируем: node:test не умеет JSON без import-атрибута.
-// Эти функции читают только booking.today и booking.tomorrow.
-const dict = {
-  booking: { today: 'Сегодня', tomorrow: 'Завтра' },
-} as unknown as Dictionary;
-
-describe('formatBookingDay', () => {
-  it('пустой день означает «сегодня»', () => {
-    // Именно это значение уходит в заявку, если клиент не выбрал день.
-    expect(formatBookingDay('', 'ru', dict)).toBe('сегодня');
-  });
-
-  it('склоняет «сегодня» и «завтра» в нижний регистр', () => {
-    expect(formatBookingDay('today', 'ru', dict)).toBe('сегодня');
-    expect(formatBookingDay('tomorrow', 'ru', dict)).toBe('завтра');
-  });
-
-  it('произвольную дату показывает по-человечески, а не как d-2026-10-05', () => {
-    expect(formatBookingDay('d-2026-10-05', 'ru', dict)).toBe('5 октября');
-    expect(formatBookingDay('2026-10-05', 'ru', dict)).toBe('5 октября');
-  });
-
-  it('битую дату не превращает в мусор', () => {
-    expect(formatBookingDay('d- nonsense', 'ru', dict)).toBe('сегодня');
-  });
-});
-
-describe('formatBookingWhen', () => {
-  it('склеивает день и слот через запятую', () => {
-    expect(formatBookingWhen('today', 'Утро 09:00–12', 'ru', dict)).toBe(
-      'сегодня, Утро 09:00–12',
-    );
-  });
-
-  it('без слота показывает только день, без висячей запятой', () => {
-    expect(formatBookingWhen('tomorrow', undefined, 'ru', dict)).toBe('завтра');
-  });
-
-  it('никогда не возвращает пустую строку', () => {
-    // Регрессия: на экране успеха строка «Когда» была пустой.
-    expect(formatBookingWhen('', undefined, 'ru', dict)).toBe('сегодня');
-  });
-});
-import { getOpenStatus, getLocalParts, canBookToday, getTimeSlots, formatScheduleLine } from '@/lib/hours';
+import { getOpenStatus, getLocalParts, formatScheduleLine } from '@/lib/hours';
 
 /**
  * Время в Asia/Aqtau (UTC+5). Моменты передаются как абсолютные даты UTC:
@@ -127,29 +81,7 @@ describe('getOpenStatus', () => {
   });
 });
 
-describe('canBookToday', () => {
-  it('разрешает «сегодня» в середине дня', () => {
-    expect(canBookToday(at(8))).toBe(true);
-  });
-
-  it('запрещает «сегодня» в последний час перед закрытием', () => {
-    // 13:00 UTC = 18:00 Актау, до закрытия час.
-    expect(canBookToday(at(13))).toBe(false);
-  });
-
-  it('запрещает «сегодня» в нерабочее время', () => {
-    expect(canBookToday(at(2))).toBe(false);
-  });
-});
-
 describe('график', () => {
-  it('строит слоты времени из графика 09:00–19:00', () => {
-    const slots = getTimeSlots();
-    expect(slots.length).toBe(4);
-    expect(slots[0]?.label).toBe('Утро 09:00–12');
-    expect(slots[3]?.label).toBe('Не важно');
-  });
-
   it('печатает график одной строкой без воскресенья', () => {
     expect(formatScheduleLine()).toBe('пн–сб 09:00–19:00');
   });

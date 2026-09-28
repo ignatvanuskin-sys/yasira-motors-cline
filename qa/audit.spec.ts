@@ -115,12 +115,12 @@ test('ни одна секция не остаётся невидимой пос
   expect(hidden, `Невидимые секции:\n${hidden.join('\n')}`).toEqual([]);
 });
 
-test('первый экран 375x667 показывает H1, кнопку и полосу доверия', async ({ page }) => {
+test('первый экран 375x667 показывает H1, кнопку связи и полосу доверия', async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 667 });
   await page.goto('/', { waitUntil: 'networkidle' });
 
   await expect(page.locator('h1').first()).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Записаться на сервис' }).first()).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Позвонить' }).first()).toBeVisible();
 
   const rating = page.locator('text=/4\\.9 · 478/').first();
   await expect(rating).toBeVisible();
@@ -142,17 +142,35 @@ test('состояние prefers-reduced-motion отключает анимац�
   await context.close();
 });
 
-test('отсутствует постоянная нижняя кнопка записи', async ({ page }) => {
+test('панель связи не перекрывает содержимое футера', async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 667 });
   await page.goto('/', { waitUntil: 'networkidle' });
-  const fixedButtons = await page.evaluate(
-    () =>
-      Array.from(document.querySelectorAll('button')).filter((el) => {
-        const style = window.getComputedStyle(el);
-        return style.position === 'fixed' && el.getBoundingClientRect().bottom > 600;
-      }).length,
-  );
-  expect(fixedButtons, 'Найдена закреплённая нижняя кнопка').toBe(0);
+
+  // scroll-behavior: smooth — дожидаемся реальной остановки внизу страницы.
+  await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+  await page.waitForFunction(() => {
+    const doc = document.documentElement;
+    return Math.abs(doc.scrollHeight - doc.scrollTop - doc.clientHeight) < 2;
+  });
+  await page.waitForTimeout(400);
+
+  const problem = await page.evaluate(() => {
+    const bar = document.querySelector('.mobile-call-bar');
+    const footer = document.querySelector('footer');
+    if (!bar || !footer) return 'нет панели или футера';
+    if (window.getComputedStyle(bar).display === 'none') {
+      return 'панель связи скрыта на мобильной ширине';
+    }
+    const barTop = bar.getBoundingClientRect().top;
+    const items = Array.from(footer.querySelectorAll('p, a, h2'));
+    const last = items.at(-1);
+    if (!last) return 'футер пуст';
+    // Нижний элемент футера должен помещаться над панелью.
+    return last.getBoundingClientRect().bottom > barTop + 1
+      ? `панель закрывает «${(last.textContent ?? '').trim().slice(0, 30)}»`
+      : null;
+  });
+  expect(problem).toBeNull();
 });
 
 test('казахские буквы отрисовываются гарнитурой без «квадратов»', async ({ page }) => {

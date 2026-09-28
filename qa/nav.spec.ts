@@ -49,6 +49,9 @@ test.describe('Меню, FAQ и навигация', () => {
     const response = await page.goto('/definitely-not-a-page');
     expect(response?.status()).toBe(404);
     await expect(page.getByRole('link', { name: 'На главную' })).toBeVisible();
+    // На 404 должен быть способ связаться, а не только ссылка на главную.
+    await expect(page.getByRole('link', { name: 'Позвонить' })).toBeVisible();
+    await expect(page.getByRole('link', { name: /WhatsApp/ })).toBeVisible();
   });
 });
 

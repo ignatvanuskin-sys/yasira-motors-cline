@@ -1,12 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import { ChevronRight, MessageCircle } from 'lucide-react';
-import { useBooking } from '@/components/booking/BookingProvider';
+import { ChevronRight } from 'lucide-react';
 import { Accordion } from '@/components/ui/Accordion';
+import { CallLink, WhatsAppLink } from '@/components/layout/ContactLinks';
 import { getPriceForService, formatPrice } from '@/content/prices';
-import { whatsappLinkWithText, buildPriceMessage } from '@/lib/whatsapp';
-import { trackClick } from '@/lib/analytics';
+import { buildServiceMessage } from '@/lib/whatsapp';
 import type { Dictionary } from '@/lib/i18n';
 import type { ServicePageContent } from '@/content/servicePages';
 import type { ServiceView, OtherService } from './serviceView';
@@ -36,7 +35,6 @@ export function ServicePageBody({
   content: ServicePageContent;
   otherServices: OtherService[];
 }) {
-  const { open } = useBooking();
   const price = getPriceForService(service.id);
 
   return (
@@ -54,27 +52,17 @@ export function ServicePageBody({
           </p>
 
           <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-            <button
-              type="button"
-              onClick={() => open(service.id, 'service_page')}
-              className="inline-flex h-13 min-h-13 items-center justify-center rounded-btn bg-accent px-5 text-base font-semibold text-on-accent transition-[background-color,transform] duration-160 ease-[cubic-bezier(.2,.7,.2,1)] hover:bg-accent-hover active:translate-y-px active:bg-accent-press focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-            >
-              {dict.cta.book}
-            </button>
-            <a
-              href={whatsappLinkWithText(buildPriceMessage())}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => trackClick('whatsapp', 'service_page')}
-              className="inline-flex h-13 min-h-13 items-center justify-center gap-2 rounded-btn border border-line-dark px-5 text-base font-semibold text-text-on-dark transition-colors duration-160 hover:bg-white/8 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-            >
-              <MessageCircle className="size-5 text-wa-icon-dark" strokeWidth={1.75} aria-hidden />
-              {dict.cta.whatsapp}
-            </a>
+            <CallLink source="service_page" label={dict.cta.call} tone="dark" size="lg" />
+            <WhatsAppLink
+              label={dict.cta.whatsapp}
+              source="service_page"
+              tone="dark"
+              size="lg"
+              message={buildServiceMessage(service.title)}
+            />
           </div>
         </div>
       </section>
-
 
       <div className="container-site grid gap-10 py-12 md:py-16 lg:grid-cols-12">
         <div className="grid gap-10 lg:col-span-8">
@@ -121,16 +109,25 @@ export function ServicePageBody({
 
         <aside className="lg:col-span-4">
           <div className="rounded-card border border-line-light bg-surface p-5 lg:sticky lg:top-20">
-            <p className="spec-label text-muted">{dict.cta.bookShort}</p>
-            <p className="mt-2 text-base text-text">{service.title}</p>
+            <p className="spec-label text-muted">{dict.contactCard.eyebrow}</p>
+            <p className="mt-2 text-base font-semibold text-text">{service.title}</p>
             <p className="mt-1 text-sm text-muted">{service.short}</p>
-            <button
-              type="button"
-              onClick={() => open(service.id, 'service_page_aside')}
-              className="mt-4 inline-flex h-13 min-h-13 w-full items-center justify-center rounded-btn bg-accent px-5 text-base font-semibold text-on-accent transition-[background-color,transform] duration-160 hover:bg-accent-hover active:translate-y-px active:bg-accent-press focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-            >
-              {dict.cta.book}
-            </button>
+            <div className="mt-4 flex flex-col gap-2.5">
+              <CallLink
+                source="service_page_aside"
+                label={dict.cta.call}
+                tone="dark"
+                size="lg"
+                full
+              />
+              <WhatsAppLink
+                label={dict.cta.whatsapp}
+                source="service_page_aside"
+                size="lg"
+                full
+                message={buildServiceMessage(service.title)}
+              />
+            </div>
           </div>
         </aside>
       </div>

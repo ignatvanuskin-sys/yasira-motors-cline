@@ -31,6 +31,14 @@
   --color-error: #d64545;
   --color-wa: #128c4a;
   --color-wa-icon-dark: #25d366;
+  /*
+   * WhatsApp-зелёный для ТЕКСТА на светлом фоне.
+   * ⚠ #128c4a (--color-wa) даёт контраст 4.3:1 на белом и 3.9:1 на
+   * #f5f4f1 — ниже порога WCAG AA 4.5:1 для текста 16px. Поэтому цвет
+   * рамок/иконок остаётся брендовым, а текст берётся более тёмный оттенок.
+   * Проверено axe: color-contrast 4.5:1+.
+   */
+  --color-wa-text: #0c6b39;
 
   /* Типографика */
   --font-display: var(--font-inter-tight), 'Inter Tight', system-ui, sans-serif;

@@ -214,25 +214,9 @@ export const NEUTRAL_STATUS = 'Ежедневно 09:00–19:00';
 /** Подпись графика для блока контактов и футера. */
 export const SCHEDULE_SUMMARY = formatScheduleLine();
 
-/** Слоты времени для шага 3 записи — границы строятся из графика. */
-export type TimeSlot = { id: string; label: string; from: number; to: number };
-
-export function getTimeSlots(): TimeSlot[] {
-  const dayRange = getDayRange(1) ?? { from: '09:00', to: '19:00' };
-  const from = parseTime(dayRange.from);
-  const to = parseTime(dayRange.to);
-  const slots: TimeSlot[] = [
-    { id: 'morning', label: `Утро ${dayRange.from}–12`, from, to: Math.min(12 * 60, to) },
-    { id: 'day', label: 'День 12–16', from: Math.max(from, 12 * 60), to: Math.min(16 * 60, to) },
-    { id: 'evening', label: `Вечер 16–${dayRange.to}`, from: Math.max(from, 16 * 60), to },
-    { id: 'any', label: 'Не важно', from, to },
-  ];
-  return slots.filter((s) => s.to > s.from);
-}
-
 /**
  * Можно ли выбрать «сегодня»: сервис открыт и до закрытия осталось больше часа.
- * Используется в шаге 3 записи для дизейбла кнопки «Сегодня».
+ * Используется в LiveStatus, чтобы не обещать приём за час до конца.
  */
 export function canBookToday(now: Date = new Date()): boolean {
   const status = getOpenStatus(now);

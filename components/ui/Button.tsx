@@ -24,7 +24,7 @@ const variants: Record<Variant, string> = {
   primary: 'bg-accent text-on-accent hover:bg-accent-hover active:bg-accent-press',
   secondary: 'border border-line-light bg-transparent text-text hover:bg-black/5 active:bg-black/10',
   ghost: 'text-text hover:bg-black/5 active:bg-black/10',
-  wa: 'border border-wa bg-transparent text-wa hover:bg-wa/8 active:bg-wa/15',
+  wa: 'border border-wa bg-transparent text-wa-text hover:bg-wa/8 active:bg-wa/15',
   onDark: 'border border-line-dark bg-transparent text-text-on-dark hover:bg-white/8 active:bg-white/12',
 };
 

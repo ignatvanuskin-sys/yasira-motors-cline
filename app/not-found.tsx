@@ -2,6 +2,8 @@ import Link from 'next/link';
 import { getDictionary } from '@/lib/i18n';
 import { Container } from '@/components/ui/Container';
 import { ButtonLink } from '@/components/ui/Button';
+import { CallLink, WhatsAppLink } from '@/components/layout/ContactLinks';
+import { buildPriceMessage } from '@/lib/whatsapp';
 
 /** 404 — раздел 9. Правильный HTTP-статус задаётся самой страницей not-found. */
 export default function NotFound() {
@@ -18,11 +20,15 @@ export default function NotFound() {
           <p className="mt-4 max-w-[60ch] text-base text-muted">{dict.errors.notFoundText}</p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <ButtonLink href="/" size="lg">
+            <CallLink source="not_found" label={dict.cta.call} tone="dark" size="lg" />
+            <WhatsAppLink
+              label={dict.cta.whatsapp}
+              source="not_found"
+              size="lg"
+              message={buildPriceMessage()}
+            />
+            <ButtonLink href="/" variant="secondary" size="lg">
               {dict.errors.toHome}
-            </ButtonLink>
-            <ButtonLink href="/#zapis" variant="secondary" size="lg">
-              {dict.errors.toBook}
             </ButtonLink>
           </div>
 

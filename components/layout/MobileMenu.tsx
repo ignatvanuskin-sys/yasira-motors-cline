@@ -1,13 +1,9 @@
-'use client';
-
 import * as Dialog from '@radix-ui/react-dialog';
 import { X } from 'lucide-react';
 import { useEffect, useRef } from 'react';
-import { useBooking } from '@/components/booking/BookingProvider';
-import { WhatsAppLink } from './ContactLinks';
+import { WhatsAppLink, CallLink } from './ContactLinks';
 import { site } from '@/content/site';
 import { SCHEDULE_SUMMARY } from '@/lib/hours';
-import { trackClick } from '@/lib/analytics';
 import type { Dictionary } from '@/lib/i18n';
 
 /**
@@ -28,7 +24,6 @@ export function MobileMenu({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
-  const { open: openBooking } = useBooking();
   const triggerRef = useRef<HTMLButtonElement>(null);
   const prefix = locale === 'kk' ? '/kk' : '';
 
@@ -70,14 +65,23 @@ export function MobileMenu({
           </div>
 
           <div className="flex flex-1 flex-col gap-3 overflow-y-auto px-4 py-4">
-            <WhatsAppLink label={dict.cta.whatsapp} source="menu" tone="dark" className="w-full !h-13 min-h-13 text-base" />
-            <a
-              href={`tel:${site.phones.primary}`}
-              onClick={() => trackClick('call', 'menu')}
-              className="inline-flex h-13 min-h-13 w-full items-center justify-center rounded-btn border border-line-dark px-5 text-base font-semibold text-text-on-dark transition-colors hover:bg-white/8 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-            >
-              {site.phones.primaryDisplay}
-            </a>
+            {/* Два главных действия сразу наверху — это вся конверсия сайта. */}
+            <CallLink
+              source="menu"
+              label={dict.cta.call}
+              tone="dark"
+              size="lg"
+              full
+              className="!text-base"
+            />
+            <WhatsAppLink
+              label={dict.cta.whatsapp}
+              source="menu"
+              tone="dark"
+              size="lg"
+              full
+              className="!text-base"
+            />
 
             <nav aria-label="Разделы сайта" className="mt-2">
               <ul className="grid gap-1">
@@ -94,17 +98,6 @@ export function MobileMenu({
                 ))}
               </ul>
             </nav>
-
-            <button
-              type="button"
-              onClick={() => {
-                onOpenChange(false);
-                openBooking(undefined, 'menu');
-              }}
-              className="mt-2 inline-flex h-13 min-h-13 w-full items-center justify-center rounded-btn bg-accent px-5 text-base font-semibold text-on-accent transition-[background-color,transform] duration-160 hover:bg-accent-hover active:translate-y-px active:bg-accent-press focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-            >
-              {dict.cta.book}
-            </button>
 
             <address className="mt-auto pt-6 text-sm text-muted-on-dark not-italic">
               <p className="tnum">{site.address.full}</p>

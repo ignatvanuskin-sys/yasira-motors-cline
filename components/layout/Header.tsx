@@ -3,21 +3,19 @@
 import { Menu } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { MobileMenu } from './MobileMenu';
-import { useBooking } from '@/components/booking/BookingProvider';
 import { Wordmark } from './Wordmark';
-import { WhatsAppLink } from './ContactLinks';
+import { CallLink, WhatsAppLink } from './ContactLinks';
 import { site } from '@/content/site';
 import type { Dictionary } from '@/lib/i18n';
 
 /**
  * Шапка — раздел 10.1.
  * Sticky, при прокрутке вниз скрывается (200 мс), при прокрутке вверх появляется.
- * Мобильный: 56px, wordmark ≤112px, янтарная кнопка «Записаться» ≤108px,
- * кнопка меню 44×44. Расчёт на 320px: 16+112+8+108+8+44+16 = 312 ≤ 320.
- * Десктоп: навигация, телефон текстом, иконка WhatsApp, кнопка записи.
+ * Мобильный: 56px, wordmark ≤112px, кнопка звонка ≤108px, кнопка меню 44×44.
+ * Расчёт на 320px: 16+112+8+108+8+44+16 = 312 ≤ 320.
+ * Десктоп: навигация, телефон текстом, кнопка «Позвонить» и WhatsApp.
  */
 export function Header({ dict, locale }: { dict: Dictionary; locale: 'ru' | 'kk' }) {
-  const { open } = useBooking();
   const [hidden, setHidden] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [lastY, setLastY] = useState(0);
@@ -97,14 +95,13 @@ export function Header({ dict, locale }: { dict: Dictionary; locale: 'ru' | 'kk'
             <WhatsAppLink label={dict.cta.whatsapp} source="header" tone="dark" />
           </div>
 
-
-          <button
-            type="button"
-            onClick={() => open(undefined, 'header')}
-            className="inline-flex h-11 max-w-[108px] items-center justify-center rounded-btn bg-accent px-3 text-sm font-semibold text-on-accent transition-[background-color,transform] duration-160 ease-[cubic-bezier(.2,.7,.2,1)] hover:bg-accent-hover active:translate-y-px active:bg-accent-press focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent lg:h-12 lg:max-w-none lg:px-5 lg:text-base"
-          >
-            <span className="truncate">{dict.cta.bookShort}</span>
-          </button>
+          <CallLink
+            source="header"
+            label={dict.cta.callShort}
+            tone="dark"
+            size="md"
+            className="max-w-[112px] !px-3 !text-sm lg:max-w-none lg:!px-5 lg:!text-base"
+          />
 
           <button
             type="button"

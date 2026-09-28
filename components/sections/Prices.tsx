@@ -1,11 +1,9 @@
 'use client';
 
-import { MessageCircle } from 'lucide-react';
 import { Section } from '@/components/ui/Section';
-import { useBooking } from '@/components/booking/BookingProvider';
+import { CallLink, WhatsAppLink } from '@/components/layout/ContactLinks';
 import { priceRows, prices, formatPrice } from '@/content/prices';
-import { whatsappLinkWithText, buildPriceMessage } from '@/lib/whatsapp';
-import { trackClick } from '@/lib/analytics';
+import { buildPriceMessage } from '@/lib/whatsapp';
 import type { Dictionary } from '@/lib/i18n';
 
 /**
@@ -15,8 +13,6 @@ import type { Dictionary } from '@/lib/i18n';
  * На мобильном таблица превращается в стек строк, без горизонтального скролла.
  */
 export function Prices({ dict }: { dict: Dictionary }) {
-  const { open } = useBooking();
-
   return (
     <Section id="ceny">
       <h2 className="text-[26px] leading-[1.12] font-bold tracking-[-0.02em] text-balance md:text-[40px]">
@@ -29,26 +25,13 @@ export function Prices({ dict }: { dict: Dictionary }) {
       {prices.hasPrices ? <PriceTable /> : <PriceFallback dict={dict} />}
 
       <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-        <button
-          type="button"
-          onClick={() => {
-            trackClick('price', 'prices');
-            open('unknown', 'prices');
-          }}
-          className="inline-flex h-13 min-h-13 items-center justify-center rounded-btn bg-accent px-5 text-base font-semibold text-on-accent transition-[background-color,transform] duration-160 ease-[cubic-bezier(.2,.7,.2,1)] hover:bg-accent-hover active:translate-y-px active:bg-accent-press focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-        >
-          {dict.prices.calculate}
-        </button>
-        <a
-          href={whatsappLinkWithText(buildPriceMessage())}
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={() => trackClick('whatsapp', 'prices')}
-          className="inline-flex h-13 min-h-13 items-center justify-center gap-2 rounded-btn border border-wa bg-transparent px-5 text-base font-semibold text-wa transition-colors duration-160 hover:bg-wa/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-        >
-          <MessageCircle className="size-5" strokeWidth={1.75} aria-hidden />
-          {dict.prices.ask}
-        </a>
+        <CallLink source="prices" label={dict.cta.call} size="lg" />
+        <WhatsAppLink
+          label={dict.prices.ask}
+          source="prices"
+          size="lg"
+          message={buildPriceMessage()}
+        />
       </div>
     </Section>
   );

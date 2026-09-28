@@ -35,7 +35,6 @@ export function Contacts({ dict }: { dict: Dictionary }) {
     },
     { icon: InstagramIcon, label: 'Instagram', href: site.social.instagram, external: true },
   ];
-
   const routes = [
     { label: dict.contacts.gis, href: site.links.gisDirections },
     { label: dict.contacts.google, href: site.links.googleDirections },

@@ -4,7 +4,7 @@ import { SiteShell } from '@/components/layout/SiteShell';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { Hero } from '@/components/sections/Hero';
-import { QuickBookingCard } from '@/components/sections/QuickBookingCard';
+import { ContactCard } from '@/components/sections/ContactCard';
 import { ServicesGrid } from '@/components/sections/ServicesGrid';
 import { WhyUs } from '@/components/sections/WhyUs';
 import { Prices } from '@/components/sections/Prices';
@@ -20,12 +20,12 @@ import { JsonLd } from '@/components/seo/JsonLd';
 export const metadata: Metadata = {
   title: 'YASIRA MOTORS — автосервис в Актау | Диагностика и ремонт',
   description:
-    'Автосервис в 25 мкр. Актау: диагностика, ходовая, электрика, АКПП, замена масла, развал-схождение. Рейтинг 4.9 в 2ГИС. Запись онлайн и в WhatsApp.',
+    'Автосервис в 25 мкр. Актау: диагностика, ходовая, электрика, АКПП, замена масла, развал-схождение. Рейтинг 4.9 в 2ГИС. Звонок и WhatsApp.',
   alternates: { canonical: '/' },
   openGraph: {
     title: 'YASIRA MOTORS — автосервис в Актау',
     description:
-      'Диагностика, ходовая, электрика, АКПП, замена масла, развал-схождение. Запись онлайн и в WhatsApp.',
+      'Диагностика, ходовая, электрика, АКПП, замена масла, развал-схождение. Запишитесь звонком или в WhatsApp.',
     locale: 'ru_KZ',
     type: 'website',
   },
@@ -50,7 +50,7 @@ export default function HomePage() {
       <Header dict={dict} locale="ru" />
 
       <main id="main">
-        <Hero dict={dict} bookingCard={<QuickBookingCard dict={dict} />} />
+        <Hero dict={dict} sideCard={<ContactCard dict={dict} />} />
         <ServicesGrid dict={dict} locale="ru" />
         <WhyUs dict={dict} />
         <Prices dict={dict} />

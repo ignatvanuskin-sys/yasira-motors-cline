@@ -8,13 +8,11 @@ import {
   Settings2,
   Truck,
   CircleDot,
-  Wrench,
 } from 'lucide-react';
 
 /**
  * Услуги в фиксированном порядке из раздела 10.3 мастер-промпта.
- * slug === null означает, что отдельной SEO-страницы у услуги нет
- * (карточка открывает только запись).
+ * slug === null означает, что отдельной SEO-страницы у услуги нет.
  */
 export type Service = {
   id: string;
@@ -26,8 +24,6 @@ export type Service = {
   /** ⚑ Цены не подтверждены: вкладка «Цены» в 2ГИС не отображается. */
   priceFrom: number | null;
   priceNote: string;
-  /** Эксклюзивный чип в шаге 1 записи. */
-  bookingOnly?: boolean;
 };
 
 export const services: Service[] = [
@@ -113,26 +109,11 @@ export const services: Service[] = [
   },
 ];
 
-/** Эксклюзивный пункт записи: клиент не знает, что сломалось. */
-export const unknownIssueService: Service = {
-  id: 'unknown',
-  slug: null,
-  index: 9,
-  title: 'Не знаю, что сломалось',
-  short: 'Опишите симптом — подскажем, с чего начать.',
-  icon: Wrench,
-  priceFrom: null,
-  priceNote: '',
-  bookingOnly: true,
-};
-
-export const allBookingOptions: Service[] = [...services, unknownIssueService];
-
 /** Чипы быстрого выбора в hero (первые четыре по порядку). */
 export const quickChips = services.slice(0, 4);
 
 export function getServiceById(id: string): Service | undefined {
-  return allBookingOptions.find((s) => s.id === id);
+  return services.find((s) => s.id === id);
 }
 
 export function getServiceBySlug(slug: string): Service | undefined {

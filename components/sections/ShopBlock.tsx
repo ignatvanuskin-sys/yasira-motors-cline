@@ -2,9 +2,10 @@
 
 import { Droplets } from 'lucide-react';
 import { Section } from '@/components/ui/Section';
-import { useBooking } from '@/components/booking/BookingProvider';
+import { WhatsAppLink } from '@/components/layout/ContactLinks';
 import { site } from '@/content/site';
 import { flags } from '@/content/flags';
+import { buildOilMessage } from '@/lib/whatsapp';
 import type { Dictionary } from '@/lib/i18n';
 
 /**
@@ -14,7 +15,6 @@ import type { Dictionary } from '@/lib/i18n';
  * Пока флаг выключен, блок вообще не рендерится — пустых рамок не остаётся.
  */
 export function ShopBlock({ dict }: { dict: Dictionary }) {
-  const { open } = useBooking();
   if (!flags.showShop) return null;
 
   return (
@@ -29,13 +29,13 @@ export function ShopBlock({ dict }: { dict: Dictionary }) {
         {/* ⚑ Строка про Nexen появляется только после подтверждения дистрибуции. */}
         <p className="mt-2 text-sm text-muted">{site.shop.addressNote}</p>
 
-        <button
-          type="button"
-          onClick={() => open('oil-change', 'shop')}
-          className="mt-5 inline-flex h-13 min-h-13 items-center justify-center rounded-btn bg-accent px-5 text-base font-semibold text-on-accent transition-[background-color,transform] duration-160 ease-[cubic-bezier(.2,.7,.2,1)] hover:bg-accent-hover active:translate-y-px active:bg-accent-press focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-        >
-          {dict.shop.cta}
-        </button>
+        <WhatsAppLink
+          label={dict.shop.cta}
+          source="shop"
+          size="lg"
+          className="mt-5"
+          message={buildOilMessage()}
+        />
       </div>
     </Section>
   );

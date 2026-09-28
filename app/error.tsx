@@ -4,10 +4,12 @@ import { useEffect } from 'react';
 import { getDictionary } from '@/lib/i18n';
 import { Container } from '@/components/ui/Container';
 import { ButtonLink } from '@/components/ui/Button';
+import { CallLink, WhatsAppLink } from '@/components/layout/ContactLinks';
+import { buildPriceMessage } from '@/lib/whatsapp';
 
 /**
  * Граница ошибок — раздел 21. Понятный текст и запасной путь связи:
- * пользователь никогда не остаётся без возможности записаться.
+ * пользователь никогда не остаётся без возможности связаться.
  */
 export default function Error({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
   const dict = getDictionary('ru');
@@ -28,23 +30,22 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
           <p className="mt-4 max-w-[60ch] text-base text-muted">{dict.errors.text}</p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <ButtonLink href="/" size="lg">
-              {dict.errors.toHome}
-            </ButtonLink>
-            <ButtonLink
-              href="tel:+77770884436"
-              variant="secondary"
+            <CallLink source="error" label={dict.cta.call} tone="dark" size="lg" />
+            <WhatsAppLink
+              label={dict.cta.whatsapp}
+              source="error"
               size="lg"
-              prefetch={false}
-            >
-              {dict.cta.call}
+              message={buildPriceMessage()}
+            />
+            <ButtonLink href="/" variant="secondary" size="lg">
+              {dict.errors.toHome}
             </ButtonLink>
             <button
               type="button"
               onClick={reset}
               className="inline-flex h-13 min-h-13 items-center justify-center rounded-btn border border-line-light px-5 text-base font-semibold text-text transition-colors duration-160 hover:border-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
             >
-              {dict.booking.retry}
+              {dict.errors.retry}
             </button>
           </div>
         </div>

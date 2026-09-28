@@ -1,24 +1,23 @@
 'use client';
 
-import { MessageCircle, Star } from 'lucide-react';
+import { Star } from 'lucide-react';
 import type { ReactNode } from 'react';
-import { Button } from '@/components/ui/Button';
-import { useBooking } from '@/components/booking/BookingProvider';
+import { CallLink, WhatsAppLink } from '@/components/layout/ContactLinks';
 import { LiveStatus } from './LiveStatus';
 import { site } from '@/content/site';
 import { quickChips } from '@/content/services';
-import { whatsappLink } from '@/lib/whatsapp';
-import { trackClick, trackEvent } from '@/lib/analytics';
+import { buildServiceMessage, whatsappLinkWithText } from '@/lib/whatsapp';
+import { trackEvent } from '@/lib/analytics';
 import type { Dictionary } from '@/lib/i18n';
 
 /**
  * Первый экран — раздел 10.2.
- * Тёмный фон, слева текст, справа карточка «Быстрая запись» (десктоп 7/5).
- * На мобильном: H1, основная кнопка и полоса доверия видны в 100svh.
+ * Тёмный фон, слева текст, справа карточка связи (десктоп 7/5).
+ * На мобильном: H1, кнопки связи и полоса доверия видны в 100svh.
+ *
+ * Формы записи нет: главное действие — звонок, второе — WhatsApp.
  */
-export function Hero({ dict, bookingCard }: { dict: Dictionary; bookingCard?: ReactNode }) {
-  const { open } = useBooking();
-
+export function Hero({ dict, sideCard }: { dict: Dictionary; sideCard?: ReactNode }) {
   return (
     <section className="relative overflow-hidden bg-bg-dark text-text-on-dark">
       <BlueprintPattern />
@@ -35,28 +34,20 @@ export function Hero({ dict, bookingCard }: { dict: Dictionary; bookingCard?: Re
             {dict.meta.subtitle}
           </p>
 
-
           <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
-            <Button size="lg" onClick={() => open(undefined, 'hero_cta')}>
-              {dict.cta.book}
-            </Button>
-            <a
-              href={whatsappLink()}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => trackClick('whatsapp', 'hero')}
-              className="inline-flex h-13 min-h-13 items-center justify-center gap-2 rounded-btn border border-line-dark bg-transparent px-5 text-base font-semibold text-text-on-dark transition-colors duration-160 ease-[cubic-bezier(.2,.7,.2,1)] hover:bg-white/8 active:bg-white/12 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent sm:h-12 sm:min-h-12"
-            >
-              <MessageCircle className="size-5 text-wa-icon-dark" strokeWidth={1.75} aria-hidden />
-              {dict.cta.whatsapp}
-            </a>
+            <CallLink source="hero" label={dict.cta.call} tone="dark" size="lg" />
+            <WhatsAppLink
+              label={dict.cta.whatsapp}
+              source="hero"
+              tone="dark"
+              size="lg"
+            />
           </div>
 
           <p className="mt-3 text-sm text-muted-on-dark">
             {dict.meta.callOr}{' '}
             <a
               href={`tel:${site.phones.primary}`}
-              onClick={() => trackClick('call', 'hero')}
               className="tnum inline-flex min-h-11 items-center font-semibold text-text-on-dark underline decoration-accent decoration-2 underline-offset-4 hover:decoration-accent-hover"
             >
               {site.phones.primaryDisplay}
@@ -76,28 +67,33 @@ export function Hero({ dict, bookingCard }: { dict: Dictionary; bookingCard?: Re
             <li className="text-muted-on-dark">{dict.trust.payment}</li>
           </ul>
 
-          {/* Мобильные чипы быстрого выбора услуги. */}
-          <div className="snap-row -mx-4 mt-4 gap-2 px-4 lg:hidden">
-            {quickChips.map((service) => (
-              <button
-                key={service.id}
-                type="button"
-                onClick={() => {
-                  trackEvent('service_card_click', { service: service.id, source: 'hero_chip' });
-                  open(service.id, 'hero_chip');
-                }}
-                className="snap-item min-h-12 shrink-0 rounded-full border border-line-dark px-4 py-2.5 text-sm font-medium text-text-on-dark transition-colors duration-160 hover:border-muted-on-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-              >
-                {service.title}
-              </button>
-            ))}
+          {/* Быстрый выбор услуги: сразу открывает WhatsApp с контекстом,
+              минуя уточняющие вопросы. */}
+          <div className="mt-4">
+            <p className="spec-label text-muted-on-dark">{dict.hero.quickTitle}</p>
+            <div className="mt-2.5 flex flex-wrap gap-2">
+              {quickChips.map((service) => (
+                <a
+                  key={service.id}
+                  href={whatsappLinkWithText(buildServiceMessage(service.title))}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() =>
+                    trackEvent('service_card_click', { service: service.id, source: 'hero_chip' })
+                  }
+                  className="inline-flex min-h-11 items-center rounded-full border border-line-dark px-4 text-sm font-medium text-text-on-dark transition-colors duration-160 hover:border-muted-on-dark hover:bg-white/8 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                >
+                  {service.title}
+                </a>
+              ))}
+            </div>
           </div>
         </div>
 
-        {/* Правая колонка: быстрая запись (5/12), только на десктопе. */}
-        {bookingCard && (
+        {/* Правая колонка: карточка связи (5/12), только на десктопе. */}
+        {sideCard && (
           <div className="hidden lg:col-span-5 lg:block">
-            <div className="rounded-card border border-line-dark bg-bg-dark-2 p-5">{bookingCard}</div>
+            <div className="rounded-card border border-line-dark bg-bg-dark-2 p-5">{sideCard}</div>
           </div>
         )}
       </div>
